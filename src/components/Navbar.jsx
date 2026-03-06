@@ -1,11 +1,12 @@
 // src/components/Navbar.jsx
 import React from 'react';
-import { TrendingUp, GitMerge, Divide } from 'lucide-react';
+import { TrendingUp, GitMerge, Divide, FlaskConical } from 'lucide-react';
 
 const VIEWS = [
-  { id: 'single',    label: 'Single Asset',    Icon: TrendingUp },
-  { id: 'synthetic', label: 'Synthetic Builder', Icon: GitMerge  },
-  { id: 'ratio',     label: 'Ratio Viewer',    Icon: Divide     },
+  { id: 'single',    label: 'Single Asset',      Icon: TrendingUp   },
+  { id: 'synthetic', label: 'Synthetic Builder',  Icon: GitMerge     },
+  { id: 'ratio',     label: 'Ratio Viewer',       Icon: Divide       },
+  { id: 'stats',     label: 'Stat Tests',          Icon: FlaskConical },
 ];
 
 export default function Navbar({ activeView, onViewChange }) {

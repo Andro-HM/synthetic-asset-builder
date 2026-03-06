@@ -60,7 +60,7 @@ export default function SingleAssetViewer() {
               {change !== null && (
                 <span className="flex items-center gap-1 text-sm font-medium pb-1" style={{ color: priceColor }}>
                   {isUp ? <TrendingUp size={14} /> : isDown ? <TrendingDown size={14} /> : <Minus size={14} />}
-                  {change >= 0 ? '+' : ''}{change.toFixed(2)} ({changePct >= 0 ? '+' : ''}{changePct.toFixed(2)}%)
+                  {change >= 0 ? '+' : ''}{change?.toFixed(2) ?? '—'} ({changePct >= 0 ? '+' : ''}{changePct?.toFixed(2) ?? '—'}%)
                 </span>
               )}
             </div>

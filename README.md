@@ -17,7 +17,6 @@ If you are developing a production application, we recommend using TypeScript wi
 
 
 
-# V1:
 # Synthetic Asset Builder — Completed Walkthrough
 
 ## What Was Built

@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import SingleAssetViewer from './components/SingleAssetViewer';
 import SyntheticBuilder from './components/SyntheticBuilder';
 import RatioViewer from './components/RatioViewer';
+import StatTests from './components/StatTests';
 
 export default function App() {
   const [activeView, setActiveView] = useState('single');
@@ -14,6 +15,7 @@ export default function App() {
       {activeView === 'single'    && <SingleAssetViewer />}
       {activeView === 'synthetic' && <SyntheticBuilder />}
       {activeView === 'ratio'     && <RatioViewer />}
+      {activeView === 'stats'     && <StatTests />}
     </div>
   );
 }
