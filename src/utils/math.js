@@ -134,3 +134,53 @@ export function computeLinearCombination(alignedDatasets, weights) {
 
   return synthetic;
 }
+
+/**
+ * Computes the ratio A / B for each aligned date.
+ *
+ * The High/Low use the same max/min-across-all-combinations technique as
+ * computeLinearCombination — division by B can flip the natural H/L ordering
+ * (just as negative weights can), so we derive actualHigh and actualLow from
+ * the extremes of all four ratio combinations rather than naively using H/H and L/L.
+ *
+ * @param {Array<{time, open, high, low, close, volume}>} datasetA  (already aligned)
+ * @param {Array<{time, open, high, low, close, volume}>} datasetB  (already aligned, same length)
+ * @returns {Array<{time, open, high, low, close, volume}>}
+ */
+export function computeRatio(datasetA, datasetB) {
+  if (datasetA.length !== datasetB.length) {
+    throw new Error('computeRatio: datasets must be the same length after alignment.');
+  }
+
+  const result = [];
+
+  for (let i = 0; i < datasetA.length; i++) {
+    const a = datasetA[i];
+    const b = datasetB[i];
+
+    // Guard against zero denominator — skip or carry forward would both be awkward;
+    // we output NaN-safe values by checking before dividing.
+    if (b.open === 0 || b.high === 0 || b.low === 0 || b.close === 0) continue;
+
+    const oo = a.open  / b.open;
+    const hh = a.high  / b.high;
+    const ll = a.low   / b.low;
+    const cc = a.close / b.close;
+
+    // Division by B can flip the ordering (e.g. a large B.low produces a large ratio).
+    // Taking max/min across all four combinations guarantees High >= Open/Close >= Low.
+    const actualHigh = Math.max(oo, hh, ll, cc);
+    const actualLow  = Math.min(oo, hh, ll, cc);
+
+    result.push({
+      time:   a.time,
+      open:   oo,
+      high:   actualHigh,
+      low:    actualLow,
+      close:  cc,
+      volume: a.volume,   // ratio volume is conventionally Asset A's volume
+    });
+  }
+
+  return result;
+}

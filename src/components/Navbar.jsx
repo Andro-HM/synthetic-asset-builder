@@ -1,6 +1,12 @@
 // src/components/Navbar.jsx
 import React from 'react';
-import { TrendingUp, GitMerge } from 'lucide-react';
+import { TrendingUp, GitMerge, Divide } from 'lucide-react';
+
+const VIEWS = [
+  { id: 'single',    label: 'Single Asset',    Icon: TrendingUp },
+  { id: 'synthetic', label: 'Synthetic Builder', Icon: GitMerge  },
+  { id: 'ratio',     label: 'Ratio Viewer',    Icon: Divide     },
+];
 
 export default function Navbar({ activeView, onViewChange }) {
   return (
@@ -14,27 +20,20 @@ export default function Navbar({ activeView, onViewChange }) {
       </div>
 
       <div className="flex rounded overflow-hidden border" style={{ borderColor: '#2a2e39' }}>
-        <button
-          onClick={() => onViewChange('single')}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all"
-          style={{
-            background: activeView === 'single' ? '#26a69a22' : 'transparent',
-            color: activeView === 'single' ? '#26a69a' : '#787b86',
-            borderRight: '1px solid #2a2e39'
-          }}
-        >
-          <TrendingUp size={14} /> Single Asset
-        </button>
-        <button
-          onClick={() => onViewChange('synthetic')}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all"
-          style={{
-            background: activeView === 'synthetic' ? '#26a69a22' : 'transparent',
-            color: activeView === 'synthetic' ? '#26a69a' : '#787b86'
-          }}
-        >
-          <GitMerge size={14} /> Synthetic Builder
-        </button>
+        {VIEWS.map(({ id, label, Icon }, idx) => (
+          <button
+            key={id}
+            onClick={() => onViewChange(id)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all"
+            style={{
+              background: activeView === id ? '#26a69a22' : 'transparent',
+              color: activeView === id ? '#26a69a' : '#787b86',
+              borderRight: idx < VIEWS.length - 1 ? '1px solid #2a2e39' : 'none',
+            }}
+          >
+            <Icon size={14} /> {label}
+          </button>
+        ))}
       </div>
     </nav>
   );
