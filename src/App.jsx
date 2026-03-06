@@ -1,0 +1,19 @@
+// src/App.jsx
+import React, { useState } from 'react';
+import Navbar from './components/Navbar';
+import SingleAssetViewer from './components/SingleAssetViewer';
+import SyntheticBuilder from './components/SyntheticBuilder';
+
+export default function App() {
+  const [activeView, setActiveView] = useState('single');
+
+  return (
+    <div className="min-h-screen" style={{ background: '#131722' }}>
+      <Navbar activeView={activeView} onViewChange={setActiveView} />
+      {activeView === 'single'
+        ? <SingleAssetViewer />
+        : <SyntheticBuilder />
+      }
+    </div>
+  );
+}
