@@ -40,8 +40,14 @@ export async function searchInstruments(query) {
  * @returns {Promise<Array<{time: string, open: number, high: number, low: number, close: number, volume: number}>>}
  */
 export async function fetchOHLCV(ticker) {
-  const params = new URLSearchParams({ interval: '1d', range: 'max' });
+  // Use period1=0 (epoch start) + period2=now rather than range=max.
+  // Yahoo Finance silently overrides interval=1d → monthly when range=max is
+  // used on long-history series (e.g. ^NSEI, ^DJI). Explicit period timestamps
+  // force it to honour the daily interval for the full available history.
+  const period2 = Math.floor(Date.now() / 1000);
+  const params = new URLSearchParams({ interval: '1d', period1: '0', period2: String(period2) });
   const response = await fetch(`/yahoo-chart/${encodeURIComponent(ticker)}?${params.toString()}`);
+
   if (!response.ok) throw new Error(`Chart request failed for "${ticker}": HTTP ${response.status}`);
 
   const data = await response.json();
@@ -77,5 +83,16 @@ export async function fetchOHLCV(ticker) {
     throw new Error(`Data returned for "${ticker}" contained no valid price bars.`);
   }
 
-  return formattedData;
+  // Deduplicate by date (keep last occurrence — Yahoo sometimes emits the same
+  // trading day twice when a split/dividend adjustment is present) then sort
+  // ascending. Lightweight Charts skips bars that are out-of-order or duplicated,
+  // causing the "weekly/monthly candle" visual artefact.
+  const dateMap = new Map();
+  for (const bar of formattedData) dateMap.set(bar.time, bar);
+  const cleaned = Array.from(dateMap.values()).sort((a, b) => (a.time < b.time ? -1 : 1));
+
+  // DEBUG: log first 10 bars so we can verify date strings in the console
+  console.log(`[fetchOHLCV] ${ticker} — first 10 bars:`, cleaned.slice(0, 10).map(b => b.time));
+
+  return cleaned;
 }

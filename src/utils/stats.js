@@ -430,8 +430,8 @@ export function runJohansen(closeArrays) {
   const S00inv = inv(matrix(S00));
   const M = multiply(multiply(multiply(S11inv, matrix(S10)), S00inv), matrix(S01));
 
-  // Eigenvalue decomposition using mathjs
-  const { values: eigVals, vectors: eigVecs } = eigs(M);
+  // mathjs eigs() returns { values, eigenvectors } — NOT { values, vectors }
+  const { values: eigVals, eigenvectors: eigVecs } = eigs(M);
 
   // Sort eigenvalues descending (they should be real and positive for cov matrices)
   const eigenvalues = (Array.isArray(eigVals) ? eigVals : eigVals.toArray())
